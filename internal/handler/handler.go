@@ -24,6 +24,9 @@ type tokenData struct {
 func RegisterUser(repo *storage.Repo) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := &storage.AuthData{}
+
+		log.Print("User register ", r.Body)
+
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			http.Error(w, "Ошибка дессериализации", http.StatusBadRequest)
 			log.Print("Ошибка дессериализации ", r.Body)
@@ -44,6 +47,8 @@ func RegisterUser(repo *storage.Repo) http.HandlerFunc {
 			log.Print("Ошибка создания токена ", err.Error())
 			return
 		}
+
+		log.Print("Создан токен ", token)
 
 		response := tokenData{}
 		response.Token = token
