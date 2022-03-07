@@ -42,7 +42,7 @@ func LoadConfigServer(cfg *ConfigServer) {
 	//v.SetEnvPrefix("gophermart")
 	v.AutomaticEnv()
 
-	v.SetDefault("AddrServer", "127.0.0.1:8090")
+	v.SetDefault("AddrServer", "127.0.0.1:8080")
 	v.SetDefault("DatabaseDSN", "postgres://postgres:qwerty@localhost:5432/exam1?sslmode=disable")
 	v.SetDefault("SessionKey", GetSessionKey())
 	v.SetDefault("Salt", GetSalt())
