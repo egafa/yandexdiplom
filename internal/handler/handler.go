@@ -55,6 +55,7 @@ func RegisterUser(repo *storage.Repo) http.HandlerFunc {
 		byt, err := json.Marshal(response)
 		if err == nil {
 			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Authorization", "Bearer "+token)
 			w.Write(byt)
 			w.WriteHeader(http.StatusOK)
 			log.Print(" Отправлен токен " + string(byt))
