@@ -26,6 +26,8 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 	var first bool
 	first = true
 
+	client := &http.Client{}
+
 	for { //i := 0; i < 40; i++ {
 
 		if first {
@@ -53,31 +55,37 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 					continue
 				}
 
-				rtext := fmt.Sprintf(urlUpdate, cfg.AccuralAddress, orderDB.Ordernum)
-				r, err := http.Get(rtext)
-
+				raddr := fmt.Sprintf(urlUpdate, cfg.AccuralAddress, orderDB.Ordernum)
+				r, err := http.NewRequest(http.MethodPost, raddr, nil)
 				if err != nil {
-					log.Print("Не удалось сформировать запрос ", err.Error())
+					log.Print("Не удалось сформировать запрос получения данных заказа ", err.Error())
+					continue
+				}
+				r.Header.Set("Content-Type", "application/json")
+
+				resp, err := client.Do(r)
+				if err != nil {
+					log.Print("Ошибка выполнения запроса получения данных заказа ", err.Error())
 					continue
 				}
 
-				if r.StatusCode != http.StatusOK {
-					log.Print("Не удалось сформировать запрос ")
+				if resp.StatusCode != http.StatusOK {
+					log.Print("Ошибочный код выполнения запроса получения данных заказа")
 					continue
 				}
 
-				defer r.Body.Close()
+				defer resp.Body.Close()
 
-				body, err := ioutil.ReadAll(r.Body)
+				body, err := ioutil.ReadAll(resp.Body)
 				if err != nil {
-					log.Print(" Ошибка открытия тела ответа ", err.Error())
+					log.Print(" Ошибка открытия тела ответа запроса получения данных заказа", err.Error())
 					continue
 				}
 
 				err = json.Unmarshal(body, &accuralOrder)
 
 				if err != nil {
-					log.Print(" Ошибка дессериализации тела ответа " + err.Error())
+					log.Print("Ошибка дессериализации тела ответа " + err.Error())
 					continue
 				}
 
