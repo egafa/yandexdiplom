@@ -97,6 +97,7 @@ func LoginUser(repo *storage.Repo) http.HandlerFunc {
 		byt, err := json.Marshal(response)
 		if err == nil {
 			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Authorization", "Bearer "+token)
 			w.Write(byt)
 			w.WriteHeader(http.StatusOK)
 			log.Print(" Отправлен токен " + string(byt))
@@ -169,7 +170,7 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 			log.Print(logText + "Ошибка получения ID пользователя")
 			return
 		}
-		fmt.Println(logText, *userID)
+		fmt.Println(logText+" USER ID = ", *userID)
 
 		isNotID, err := repo.FindOrderNotID(&orderNumber, userID)
 		if err != nil {
