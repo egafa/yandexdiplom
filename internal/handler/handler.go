@@ -138,10 +138,13 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 
 		defer r.Body.Close()
 
+		logText := "********* Load order ********** "
+		log.Print(logText)
+
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "Ошибка получения номера заказа", http.StatusBadRequest)
-			log.Print("Ошибка получения номера заказа ", err.Error())
+			log.Print(logText+"Ошибка получения номера заказа ", err.Error())
 			return
 		}
 
@@ -149,60 +152,60 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 		matched, err := regexp.MatchString(`[0-9]`, orderNumber)
 		if !matched || err != nil {
 			http.Error(w, "Ошибка преобразования номера заказа", http.StatusBadRequest)
-			log.Print("Ошибка преобразования номера заказа ", err.Error())
+			log.Print(logText+"Ошибка преобразования номера заказа ", err.Error())
 			return
 		}
 
 		if !checkLuhn(orderNumber) {
 			http.Error(w, "Ошибка проверки номера заказа", http.StatusBadRequest)
-			log.Print("Ошибка проверки номера заказа ", err.Error())
+			log.Print(logText+"Ошибка проверки номера заказа ", err.Error())
 			return
 		}
 
 		userID, ok := r.Context().Value(userCtx).(*int)
-		fmt.Println(userID)
 
 		if !ok {
 			http.Error(w, "Ошибка получения ID пользователя", http.StatusBadRequest)
-			log.Print("Ошибка получения ID пользователя")
+			log.Print(logText + "Ошибка получения ID пользователя")
 			return
 		}
+		fmt.Println(logText, *userID)
 
 		isNotID, err := repo.FindOrderNotID(&orderNumber, userID)
 		if err != nil {
 			http.Error(w, "Ошибка получения запросв на проверку другого подьзователя номера заказа", http.StatusBadRequest)
-			log.Print("Ошибка получения запросв на проверку другого подьзователя номера заказа ", err.Error())
+			log.Print(logText+"Ошибка получения запросв на проверку другого подьзователя номера заказа ", err.Error())
 			return
 		}
 
 		if isNotID {
 			http.Error(w, "номер заказа уже был загружен другим пользователем", http.StatusConflict)
-			log.Print("номер заказа уже был загружен другим пользователем ", err.Error())
+			log.Print(logText+"номер заказа уже был загружен другим пользователем ", err.Error())
 			return
 		}
 
 		isID, err := repo.FindOrderID(&orderNumber, userID)
 		if err != nil {
 			http.Error(w, "Ошибка получения запросв на проверку пользователя номера заказа", http.StatusBadRequest)
-			log.Print("Ошибка получения запросв на проверку пользователя номера заказа ", err.Error())
+			log.Print(logText+"Ошибка получения запросв на проверку пользователя номера заказа ", err.Error())
 			return
 		}
 
 		if isID {
 			w.WriteHeader(http.StatusOK)
-			log.Print("номер заказа уже был загружен этим пользователем ")
+			log.Print(logText + "номер заказа уже был загружен этим пользователем ")
 			return
 		}
 
 		err = repo.NewOrder(&orderNumber, userID)
 		if err != nil {
 			http.Error(w, "Ошибка обработки нового заказа ", http.StatusInternalServerError)
-			log.Print("Ошибка обработки нового заказа ", err.Error())
+			log.Print(logText+"Ошибка обработки нового заказа ", err.Error())
 			return
 		}
 
 		w.WriteHeader(http.StatusAccepted)
-		log.Print("Новый номер заказа успешно обработан " + orderNumber)
+		log.Print(logText + "Новый номер заказа успешно обработан " + orderNumber)
 
 	}
 }
