@@ -159,7 +159,7 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 
 		if !checkLuhn(orderNumber) {
 			http.Error(w, "Ошибка проверки номера заказа", http.StatusBadRequest)
-			log.Print(logText+"Ошибка проверки номера заказа ", err.Error())
+			log.Print(logText + "Ошибка проверки номера заказа")
 			return
 		}
 
