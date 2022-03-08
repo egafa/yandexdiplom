@@ -150,10 +150,17 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 		}
 
 		orderNumber := string(body)
+		fmt.Println(logText+" orderNumber = ", orderNumber)
+
 		matched, err := regexp.MatchString(`[0-9]`, orderNumber)
-		if !matched || err != nil {
-			http.Error(w, "Ошибка преобразования номера заказа", http.StatusBadRequest)
-			log.Print(logText+"Ошибка преобразования номера заказа ", err.Error())
+		if err != nil {
+			http.Error(w, "Ошибка проверки на вхождение цифр номера заказа", http.StatusBadRequest)
+			log.Print(logText+"Ошибка проверки на вхождение цифр номера заказа", err.Error())
+			return
+		}
+		if !matched {
+			http.Error(w, "Ошибка проверки на вхождение цифр номера заказа", http.StatusBadRequest)
+			log.Print(logText + "Ошибка проверки на вхождение цифр номера заказа ")
 			return
 		}
 
@@ -162,8 +169,6 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 			log.Print(logText + "Ошибка проверки номера заказа")
 			return
 		}
-
-		fmt.Println(logText+" orderNumber = ", orderNumber)
 
 		fmt.Println(logText + " Получение USER ID")
 
