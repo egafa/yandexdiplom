@@ -46,36 +46,38 @@ func (r *Repo) Order(n string) string {
 func NewRepo(cfg *config.ConfigServer) (Repo, error) {
 	r := Repo{}
 
-	db, err := sql.Open("pgx", cfg.Get("DatabaseDSN"))
+	db, err := sql.Open("pgx", cfg.DatabaseDSN)
 	if err != nil {
 		log.Println("database error ", err.Error())
 		return r, err
 	}
 
-	db.Exec("CREATE TABLE IF NOT EXISTS " + cfg.Get("UserTable") +
+	r.db = db
+	r.Cfg = cfg
+	r.UserTable = cfg.UserTable
+	r.OrderTable = cfg.OrderTable
+	r.WithdrawTable = cfg.WithdrawTable
+
+	db.Exec("CREATE TABLE IF NOT EXISTS " + r.UserTable +
 		`("id" SERIAL PRIMARY KEY,` +
 		`"login" varchar(50), "name" varchar(100), "hash" varchar(300))`)
-	db.Exec("CREATE INDEX IF NOT EXISTS login ON " + cfg.Get("UserTable") + " (login)")
+	db.Exec("CREATE INDEX IF NOT EXISTS login ON " + r.UserTable + " (login)")
 
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS " + cfg.Get("OrderTable") +
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS " + r.OrderTable +
 		`("id" SERIAL PRIMARY KEY,` +
 		`"ordernum" varchar(50), "status" varchar(20), uploaded timestamp, userid bigint, accural numeric(15,2))`)
-	db.Exec("CREATE INDEX IF NOT EXISTS userid ON " + cfg.Get("OrderTable") + " (userid)")
+	db.Exec("CREATE INDEX IF NOT EXISTS userid ON " + r.OrderTable + " (userid)")
 
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS " + cfg.Get("WithdrawTable") +
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS " + r.WithdrawTable +
 		`("id" SERIAL PRIMARY KEY,` +
 		`"ordernum" varchar(50), processed timestamp, userid bigint, sum numeric(15,2))`)
-	db.Exec("CREATE INDEX IF NOT EXISTS userid ON " + cfg.Get("WithdrawTable") + " (userid)")
+	db.Exec("CREATE INDEX IF NOT EXISTS userid ON " + r.WithdrawTable + " (userid)")
 
 	if err != nil {
 		log.Println("database error ", err.Error())
+		return Repo{}, err
 	}
 
-	r.db = db
-	r.Cfg = cfg
-	r.UserTable = cfg.Get("UserTable")
-	r.OrderTable = cfg.Get("OrderTable")
-	r.WithdrawTable = cfg.Get("WithdrawTable")
 	return r, nil
 }
 

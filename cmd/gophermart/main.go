@@ -17,9 +17,9 @@ import (
 )
 
 func main() {
-	cfg := config.NewConfig()
+	cfg := config.LoadConfig()
 
-	log.Println("Запуск Сервера", cfg.Get("AddrServer"))
+	log.Println("Запуск Сервера", cfg.AddrServer)
 	log.Println("Конфиг ", *cfg)
 
 	repo, err := storage.NewRepo(cfg)
@@ -65,7 +65,7 @@ func main() {
 
 	srv := &http.Server{
 		Handler: r,
-		Addr:    cfg.Get("AddrServer"),
+		Addr:    cfg.AddrServer,
 	}
 
 	idleConnsClosed := make(chan struct{})
@@ -91,6 +91,8 @@ func main() {
 		// Error starting or closing listener:
 		log.Fatalf("HTTP server ListenAndServe: %v", err)
 	}
+
+	go sendReq(ctx, cfg, &repo)
 
 	<-idleConnsClosed
 

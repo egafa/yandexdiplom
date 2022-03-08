@@ -1,94 +1,64 @@
 package config
 
 import (
-	"log"
-	"sync"
-
-	"github.com/spf13/viper"
+	"flag"
+	"os"
 )
 
-type ConfigAgent struct {
-	AddrServer    string
-	SleepInterval int
-}
-
-func NewAgentConfig() *ConfigAgent {
-	v := viper.New()
-	//v.SetEnvPrefix("gophermart")
-	v.AutomaticEnv()
-
-	v.SetDefault("AddrServer", "127.0.0.1:8080")
-	v.SetDefault("SleepInterval", 70)
-
-	return &ConfigAgent{
-		AddrServer:    v.GetString("AddrServer"),
-		SleepInterval: v.GetInt("SleepInterval"),
-	}
-}
-
 type ConfigServer struct {
-	once    sync.Once
-	vals    map[string]string
-	valsInt map[string]int
+	AddrServer     string
+	DatabaseDSN    string
+	AccuralAddress string
+	TokenTTL       int
+	SleepInterval  int
+	Salt           string
+	SessionKey     string
+	UserTable      string
+	OrderTable     string
+	WithdrawTable  string
 }
 
 func NewConfig() *ConfigServer {
 	return &ConfigServer{}
 }
 
-func LoadConfigServer(cfg *ConfigServer) {
+func LoadConfig() (cfg *ConfigServer) {
 
-	v := viper.New()
-	//v.SetEnvPrefix("gophermart")
-	v.AutomaticEnv()
+	runAaddressENV := "RUN_ADDRESS"
+	databaseURIENV := "DATABASE_URI"
+	accuralAddressENV := "ACCRUAL_SYSTEM_ADDRESS"
 
-	v.SetDefault("AddrServer", "127.0.0.1:8080")
-	v.SetDefault("DatabaseDSN", "postgres://postgres:qwerty@localhost:5432/exam1?sslmode=disable")
-	v.SetDefault("SessionKey", GetSessionKey())
-	v.SetDefault("Salt", GetSalt())
-	v.SetDefault("UserTable", "users")
-	v.SetDefault("OrderTable", "orders5")
-	v.SetDefault("WithdrawTable", "WithdrawTable1")
-	v.SetDefault("TokenTTL", 24)
+	runAaddress := flag.String("a", "127.0.0.1:8090", "адрес сервера")
 
-	cfg.vals = make(map[string]string)
-	cfg.vals["AddrServer"] = v.GetString("AddrServer")
-	cfg.vals["DatabaseDSN"] = v.GetString("DatabaseDSN")
-	cfg.vals["SessionKey"] = v.GetString("SessionKey")
-	cfg.vals["Salt"] = v.GetString("Salt")
-	cfg.vals["UserTable"] = v.GetString("UserTable")
-	cfg.vals["OrderTable"] = v.GetString("OrderTable")
-	cfg.vals["WithdrawTable"] = v.GetString("WithdrawTable")
+	dsn := "postgres://postgres:qwerty@localhost:5432/exam1?sslmode=disable"
+	databaseURI := flag.String("d", dsn, "database URI")
+	accuralAddress := flag.String("r", "127.0.0.1:8080", "ACCRUAL_SYSTEM_ADDRESS")
 
-	cfg.valsInt = make(map[string]int)
-	cfg.valsInt["TokenTTL"] = v.GetInt("TokenTTL")
+	flag.Parse()
 
+	SetVal(runAaddressENV, runAaddress)
+	SetVal(databaseURIENV, databaseURI)
+	SetVal(accuralAddressENV, accuralAddress)
+
+	return &ConfigServer{
+		AddrServer:     *runAaddress,
+		DatabaseDSN:    *databaseURI,
+		AccuralAddress: *accuralAddress,
+		TokenTTL:       12,
+		SleepInterval:  60,
+		SessionKey:     GetSessionKey(),
+		Salt:           GetSalt(),
+		UserTable:      "users",
+		OrderTable:     "orders5",
+		WithdrawTable:  "withdrawtable1",
+	}
 }
 
-func (cfg *ConfigServer) Get(k string) string {
-	cfg.once.Do(func() {
-		LoadConfigServer(cfg)
-	})
-
-	v, ok := cfg.vals[k]
-
-	if !ok {
-		log.Fatal("Не найдена настройка конфига " + k)
+func SetVal(env string, val *string) {
+	valEnv, ok := os.LookupEnv(env)
+	if ok {
+		*val = valEnv
 	}
-	return v
-}
-
-func (cfg *ConfigServer) GetInt(k string) int {
-	cfg.once.Do(func() {
-		LoadConfigServer(cfg)
-	})
-
-	v, ok := cfg.valsInt[k]
-
-	if !ok {
-		log.Fatal("Не найдена настройка конфига int64" + k)
-	}
-	return v
 }
 
 func GetSessionKey() string {

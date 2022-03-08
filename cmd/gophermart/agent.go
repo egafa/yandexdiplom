@@ -7,9 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
+	"time"
 
 	"github.com/egafa/yandexdiplom/config"
 	"github.com/egafa/yandexdiplom/storage"
@@ -21,13 +19,20 @@ type AccuralOrder struct {
 	Accural float32 `json:"Accural"`
 }
 
-func sendReq(ctx context.Context, cfg *config.ConfigAgent, repo *storage.Repo) {
+func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) {
 
 	urlUpdate := "http://%s/api/orders/%s"
 
+	var first bool
+	first = true
+
 	for { //i := 0; i < 40; i++ {
 
-		//time.Sleep(time.Duration(cfg.SleepInterval) * time.Second)
+		if first {
+			first = false
+		} else {
+			time.Sleep(time.Duration(cfg.SleepInterval) * time.Second)
+		}
 
 		select {
 		case <-ctx.Done():
@@ -48,7 +53,7 @@ func sendReq(ctx context.Context, cfg *config.ConfigAgent, repo *storage.Repo) {
 					continue
 				}
 
-				rtext := fmt.Sprintf(urlUpdate, cfg.AddrServer, orderDB.Ordernum)
+				rtext := fmt.Sprintf(urlUpdate, cfg.AccuralAddress, orderDB.Ordernum)
 				r, err := http.Get(rtext)
 
 				if err != nil {
@@ -89,31 +94,5 @@ func sendReq(ctx context.Context, cfg *config.ConfigAgent, repo *storage.Repo) {
 			}
 		}
 	}
-
-}
-
-func main() {
-	cfg := config.NewAgentConfig()
-	log.Println("Запуск агента.")
-	log.Println("Сервер ", cfg.AddrServer)
-
-	cfgServer := config.NewConfig()
-	repo, err := storage.NewRepo(cfgServer)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	defer repo.Close()
-
-	ctx, cancel := context.WithCancel(context.Background())
-
-	go sendReq(ctx, cfg, &repo)
-
-	sigint := make(chan os.Signal, 1)
-	signal.Notify(sigint, os.Interrupt, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-	// Block until a signal is received.
-	<-sigint
-
-	cancel()
-	log.Println("Стоп агента")
 
 }
