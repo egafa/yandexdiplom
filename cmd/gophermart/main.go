@@ -53,14 +53,11 @@ func main() {
 		r.Get("/", handler.GetOrders(&repo))
 	})
 
-	r.Route("/api/user/balance/withdraw", func(r chi.Router) {
+	r.Route("/api/user/balance", func(r chi.Router) {
 		r.Use(handler.UserIdentity)
-		r.Post("/", handler.LoadWithdraw(&repo))
-	})
-
-	r.Route("/api/user/balance/withdrawals", func(r chi.Router) {
-		r.Use(handler.UserIdentity)
-		r.Get("/", handler.GetListWithdraws(&repo))
+		r.Get("/", handler.GetBalance(&repo))
+		r.Post("/withdraw", handler.LoadWithdraw(&repo))
+		r.Get("/withdrawals", handler.LoadWithdraw(&repo))
 	})
 
 	srv := &http.Server{

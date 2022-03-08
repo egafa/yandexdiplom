@@ -129,6 +129,32 @@ func GetOrders(repo *storage.Repo) http.HandlerFunc {
 		}
 
 		w.Write(b)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		log.Print("номера заказов успешно получены")
+	}
+}
+
+func GetBalance(repo *storage.Repo) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		userID := r.Context().Value("userId").(*int)
+
+		b, err := repo.GetBalanceJSON(userID)
+		if err != nil {
+			http.Error(w, "Ошибка баланса запросв на проверку пользователя номера заказа", http.StatusInternalServerError)
+			log.Print("Ошибка получения запросв на проверку пользователя номера заказа ", err.Error())
+			return
+		}
+
+		if b == nil {
+			http.Error(w, "Нет данных", http.StatusNoContent)
+			log.Print("Нет данных")
+			return
+		}
+
+		w.Write(b)
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		log.Print("номера заказов успешно получены")
 	}

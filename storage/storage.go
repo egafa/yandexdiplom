@@ -336,7 +336,7 @@ func (r *Repo) BalanceEnough(userID *int, sum *float32) (bool, error) {
 		return false, err
 	}
 
-	if (b.accural - b.withdrawn) >= *sum {
+	if (b.Accural - b.Withdrawn) >= *sum {
 		return true, nil
 	}
 
@@ -344,8 +344,18 @@ func (r *Repo) BalanceEnough(userID *int, sum *float32) (bool, error) {
 }
 
 type Balance struct {
-	accural   float32
-	withdrawn float32
+	Accural   float32 `json:"current"`
+	Withdrawn float32 `json:"withdrawn"`
+}
+
+func (r *Repo) GetBalanceJSON(userID *int) ([]byte, error) {
+	b, err := r.GetBalance(userID)
+
+	res, err := json.Marshal(b)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *Repo) GetBalance(userID *int) (Balance, error) {
@@ -365,7 +375,7 @@ func (r *Repo) GetBalance(userID *int) (Balance, error) {
 		return Balance{}, err
 	}
 
-	res.accural = sum
+	res.Accural = sum
 	sum = 0
 
 	qtext = fmt.Sprintf("select sum from %v where userID = $1", r.WithdrawTable)
@@ -382,7 +392,7 @@ func (r *Repo) GetBalance(userID *int) (Balance, error) {
 		return Balance{}, err
 	}
 
-	res.withdrawn = sum
+	res.Withdrawn = sum
 
 	return res, nil
 }
