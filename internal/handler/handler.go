@@ -163,6 +163,10 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
+		fmt.Println(logText+" orderNumber = ", orderNumber)
+
+		fmt.Println(logText + " Получение USER ID")
+
 		userID, ok := r.Context().Value(userCtx).(*int)
 
 		if !ok {
