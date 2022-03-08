@@ -40,8 +40,8 @@ func RegisterUser(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		TokenTTL := time.Duration(repo.Cfg.GetInt("TokenTTL"))
-		token, err := GenerateToken(id, TokenTTL, repo.Cfg.Get("SessionKey"))
+		TokenTTL := time.Duration(repo.Cfg.TokenTTL)
+		token, err := GenerateToken(id, TokenTTL, repo.Cfg.SessionKey)
 		if err != nil {
 			http.Error(w, "Ошибка создания токена", http.StatusBadRequest)
 			log.Print("Ошибка создания токена ", err.Error())
@@ -84,8 +84,8 @@ func LoginUser(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		TokenTTL := time.Duration(repo.Cfg.GetInt("TokenTTL"))
-		token, err := GenerateToken(id, TokenTTL, repo.Cfg.Get("SessionKey"))
+		TokenTTL := time.Duration(repo.Cfg.TokenTTL)
+		token, err := GenerateToken(id, TokenTTL, repo.Cfg.SessionKey)
 		if err != nil {
 			http.Error(w, "Ошибка создания токена", http.StatusBadRequest)
 			log.Print("Ошибка создания токена ", err.Error())
