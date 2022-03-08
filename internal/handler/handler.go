@@ -185,13 +185,13 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 		if !matched {
-			http.Error(w, "Ошибка проверки на вхождение цифр номера заказа", http.StatusBadRequest)
+			http.Error(w, "Ошибка проверки на вхождение цифр номера заказа", http.StatusUnprocessableEntity)
 			log.Print(logText + "Ошибка проверки на вхождение цифр номера заказа ")
 			return
 		}
 
 		if !checkLuhn(orderNumber) {
-			http.Error(w, "Ошибка проверки номера заказа", http.StatusBadRequest)
+			http.Error(w, "Ошибка проверки номера заказа", http.StatusUnprocessableEntity)
 			log.Print(logText + "Ошибка проверки номера заказа")
 			return
 		}
