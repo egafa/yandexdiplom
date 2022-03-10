@@ -190,13 +190,11 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		/*
-			if !checkLuhn(orderNumber) {
-				http.Error(w, "Ошибка проверки номера заказа", http.StatusUnprocessableEntity)
-				log.Print(logText+"Ошибка проверки номера заказа ", orderNumber)
-				return
-			}
-		*/
+		if !checkLuhn(orderNumber) {
+			http.Error(w, "Ошибка проверки номера заказа", http.StatusUnprocessableEntity)
+			log.Print(logText+"Ошибка проверки номера заказа ", orderNumber)
+			return
+		}
 
 		fmt.Println(logText + " Получение USER ID")
 
@@ -338,6 +336,7 @@ func GetListWithdraws(repo *storage.Repo) http.HandlerFunc {
 
 		w.Write(b)
 		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
 		log.Print("List Withdraws успешно получены")
 	}
 }
