@@ -122,8 +122,11 @@ func GetOrders(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
+		w.Header().Set("Content-Type", "application/json")
+
 		if b == nil {
-			http.Error(w, "Нет данных", http.StatusNoContent)
+			w.WriteHeader(http.StatusNoContent)
+			//http.Error(w, "Нет данных", http.StatusNoContent)
 			log.Print("Нет данных")
 			return
 		}
