@@ -45,7 +45,7 @@ func LoadConfig() (cfg *ConfigServer) {
 		DatabaseDSN:    *databaseURI,
 		AccuralAddress: *accuralAddress,
 		TokenTTL:       12,
-		SleepInterval:  10,
+		SleepInterval:  2,
 		SessionKey:     GetSessionKey(),
 		Salt:           GetSalt(),
 		UserTable:      "users",

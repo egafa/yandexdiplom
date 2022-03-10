@@ -252,7 +252,7 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 		defer r.Body.Close()
 
 		logText := "******** LoadWithdraw "
-		log.Print(logText, r.URL)
+		log.Print(logText, r.RequestURI)
 
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -292,6 +292,8 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 			log.Print("Ошибка получения ID пользователя")
 			return
 		}
+
+		log.Print(logText, withdraw)
 
 		enough, err := repo.BalanceEnough(userID, &withdraw.Sum)
 		if err != nil {
