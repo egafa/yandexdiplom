@@ -209,7 +209,7 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 
 		isNotID, err := repo.FindOrderNotID(&orderNumber, userID)
 		if err != nil {
-			http.Error(w, "Ошибка получения запросв на проверку другого подьзователя номера заказа", http.StatusBadRequest)
+			http.Error(w, "Ошибка получения запросв на проверку другого подьзователя номера заказа", http.StatusConflict)
 			log.Print(logText+"Ошибка получения запросв на проверку другого подьзователя номера заказа ", err.Error())
 			return
 		}
@@ -222,13 +222,13 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 
 		isID, err := repo.FindOrderID(&orderNumber, userID)
 		if err != nil {
-			http.Error(w, "Ошибка получения запросв на проверку пользователя номера заказа", http.StatusBadRequest)
+			http.Error(w, "Ошибка получения запросв на проверку пользователя номера заказа", http.StatusConflict)
 			log.Print(logText+"Ошибка получения запросв на проверку пользователя номера заказа ", err.Error())
 			return
 		}
 
 		if isID {
-			w.WriteHeader(http.StatusOK)
+			http.Error(w, "номер заказа уже был загружен этим пользователем", http.StatusConflict)
 			log.Print(logText + "номер заказа уже был загружен этим пользователем")
 			return
 		}

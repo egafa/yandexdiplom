@@ -89,6 +89,8 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 					continue
 				}
 
+				log.Print("Отправлен запрос получения данных заказа ", orderDB)
+
 				//accuralOrder.Order = "5246029110944032"
 				//accuralOrder.Status = "PROCESSED"
 				//accuralOrder.Accural = 500.00
@@ -98,6 +100,10 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 				orderDB.Accural = accuralOrder.Accural
 
 				err = repo.UpdateNewOrder(&orderDB)
+				if err != nil {
+					log.Print("Ошибка обновления данных заказа ", err.Error())
+					continue
+				}
 
 			}
 		}
