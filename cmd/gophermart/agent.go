@@ -23,18 +23,11 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 
 	urlUpdate := "http://%s/api/orders/%s"
 
-	var first bool
-	first = true
-
 	client := &http.Client{}
 
 	for { //i := 0; i < 40; i++ {
 
-		if first {
-			first = false
-		} else {
-			time.Sleep(time.Duration(cfg.SleepInterval) * time.Second)
-		}
+		time.Sleep(time.Duration(cfg.SleepInterval) * time.Second)
 
 		select {
 		case <-ctx.Done():
@@ -42,8 +35,6 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 		default:
 			{
 				var accuralOrder AccuralOrder
-
-				log.Print("Запуск агента")
 
 				orderDB, err := repo.FindNewOrder()
 

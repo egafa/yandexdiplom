@@ -215,7 +215,8 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 		}
 
 		if isNotID {
-			http.Error(w, "номер заказа уже был загружен другим пользователем", http.StatusConflict)
+			w.WriteHeader(http.StatusConflict)
+			//http.Error(w, "номер заказа уже был загружен другим пользователем", http.StatusConflict)
 			log.Print(logText + "номер заказа уже был загружен другим пользователем ")
 			return
 		}
@@ -228,7 +229,7 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 		}
 
 		if isID {
-			http.Error(w, "номер заказа уже был загружен этим пользователем", http.StatusConflict)
+			w.WriteHeader(http.StatusOK)
 			log.Print(logText + "номер заказа уже был загружен этим пользователем")
 			return
 		}
