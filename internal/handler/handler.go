@@ -25,7 +25,7 @@ func RegisterUser(repo *storage.Repo) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := &storage.AuthData{}
 
-		log.Print("User register ", r.Body)
+		//log.Print("User register ", r.Body)
 
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			http.Error(w, "Ошибка дессериализации", http.StatusBadRequest)
@@ -48,7 +48,7 @@ func RegisterUser(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		log.Print("Создан токен ", token)
+		//log.Print("Создан токен ", token)
 
 		response := tokenData{}
 		response.Token = token
@@ -58,7 +58,7 @@ func RegisterUser(repo *storage.Repo) http.HandlerFunc {
 			w.Header().Set("Authorization", "Bearer "+token)
 			w.Write(byt)
 			w.WriteHeader(http.StatusOK)
-			log.Print(" Отправлен токен " + string(byt))
+			//log.Print(" Отправлен токен " + string(byt))
 			return
 		}
 
@@ -251,6 +251,9 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 
 		defer r.Body.Close()
 
+		logText := "******** LoadWithdraw "
+		log.Print(logText, r.URL)
+
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "Ошибка получения номера заказа", http.StatusBadRequest)
@@ -298,8 +301,8 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 		}
 
 		if !enough {
-			http.Error(w, "не достаточно средств", http.StatusPaymentRequired)
-			log.Print("не достаточно средств")
+			http.Error(w, "не достаточно средств ", http.StatusPaymentRequired)
+			log.Print("не достаточно средств ", withdraw)
 			return
 		}
 
