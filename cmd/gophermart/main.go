@@ -20,7 +20,8 @@ func main() {
 	cfg := config.LoadConfig()
 
 	log.Println("Запуск Сервера", cfg.AddrServer)
-	log.Println("Конфиг ", *cfg)
+	log.Println("DatabaseDSN ", *&cfg.DatabaseDSN)
+	log.Println("AccuralAddress ", *&cfg.AccuralAddress)
 
 	repo, err := storage.NewRepo(cfg)
 	if err != nil {
@@ -57,7 +58,7 @@ func main() {
 		r.Use(handler.UserIdentity)
 		r.Get("/", handler.GetBalance(&repo))
 		r.Post("/withdraw", handler.LoadWithdraw(&repo))
-		r.Get("/withdrawals", handler.LoadWithdraw(&repo))
+		r.Get("/withdrawals", handler.GetListWithdraws(&repo))
 	})
 
 	srv := &http.Server{
