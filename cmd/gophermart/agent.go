@@ -61,7 +61,7 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 
 				resp, err := client.Do(r)
 				if err != nil {
-					log.Print(logText, " Ошибка выполнения запроса получения данных заказа ", orderDB.Ordernum, err.Error())
+					log.Print(logText, " Ошибка выполнения запроса получения данных заказа ", raddr, err.Error())
 					continue
 				}
 
