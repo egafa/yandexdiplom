@@ -36,6 +36,9 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 			{
 				var accuralOrder AccuralOrder
 
+				logText := "<<<<<< Запуск Клиента <<<<<<<<< "
+				log.Print(logText)
+
 				orderDB, err := repo.FindNewOrder()
 
 				if err != nil {
@@ -82,7 +85,7 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 					continue
 				}
 
-				log.Print("Отправлен запрос получения данных заказа ", raddr, orderDB)
+				log.Print(logText+" Отправлен запрос получения данных заказа ", raddr, orderDB)
 
 				//accuralOrder.Order = "5246029110944032"
 				//accuralOrder.Status = "PROCESSED"

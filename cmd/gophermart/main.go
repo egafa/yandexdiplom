@@ -33,7 +33,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger)
+	//r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(zipcompess.DecompressHandle)
 	r.Use(zipcompess.GzipHandle)
@@ -67,6 +67,8 @@ func main() {
 
 	idleConnsClosed := make(chan struct{})
 
+	go sendReq(ctx, cfg, &repo)
+
 	go func() {
 		sigint := make(chan os.Signal, 1)
 		signal.Notify(sigint, os.Interrupt, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
@@ -88,8 +90,6 @@ func main() {
 		// Error starting or closing listener:
 		log.Fatalf("HTTP server ListenAndServe: %v", err)
 	}
-
-	go sendReq(ctx, cfg, &repo)
 
 	<-idleConnsClosed
 
