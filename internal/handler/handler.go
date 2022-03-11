@@ -113,6 +113,9 @@ func LoginUser(repo *storage.Repo) http.HandlerFunc {
 func GetOrders(repo *storage.Repo) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
+		logText := "********* GetOrders ********** "
+		log.Print(logText, r.RequestURI)
+
 		userID := r.Context().Value("userId").(*int)
 
 		b, err := repo.GetListOrdersJSON(userID)
@@ -127,14 +130,14 @@ func GetOrders(repo *storage.Repo) http.HandlerFunc {
 		if b == nil {
 			w.WriteHeader(http.StatusNoContent)
 			//http.Error(w, "Нет данных", http.StatusNoContent)
-			log.Print("Нет данных")
+			log.Print(logText, " Нет данных у пользователя ", userID)
 			return
 		}
 
 		w.Write(b)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		log.Print("номера заказов успешно получены")
+		log.Print(logText, " номера заказов успешно получены")
 	}
 }
 
@@ -142,6 +145,9 @@ func GetBalance(repo *storage.Repo) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		userID := r.Context().Value("userId").(*int)
+
+		logText := "********* GetOrders ********** "
+		log.Print(logText, r.RequestURI, " userID ", userID)
 
 		b, err := repo.GetBalanceJSON(userID)
 		if err != nil {
@@ -169,7 +175,7 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 		defer r.Body.Close()
 
 		logText := "********* Load order ********** "
-		log.Print(logText)
+		log.Print(logText, r.RequestURI)
 
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -256,7 +262,15 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 		defer r.Body.Close()
 
 		logText := "******** LoadWithdraw "
-		log.Print(logText, r.RequestURI)
+
+		userID, ok := r.Context().Value(userCtx).(*int)
+		if !ok {
+			http.Error(w, "Ошибка получения ID пользователя", http.StatusInternalServerError)
+			log.Print(logText, "Ошибка получения ID пользователя")
+			return
+		}
+
+		log.Print(logText, r.RequestURI, " userID ", userID)
 
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -285,15 +299,6 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 		if !checkLuhn(orderNumber) {
 			http.Error(w, "Ошибка проверки номера заказа", http.StatusUnprocessableEntity)
 			log.Print("Ошибка проверки номера заказа ")
-			return
-		}
-
-		userID, ok := r.Context().Value(userCtx).(*int)
-		fmt.Println(userID)
-
-		if !ok {
-			http.Error(w, "Ошибка получения ID пользователя", http.StatusInternalServerError)
-			log.Print("Ошибка получения ID пользователя")
 			return
 		}
 
@@ -328,7 +333,16 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 func GetListWithdraws(repo *storage.Repo) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		userID := r.Context().Value("userId").(*int)
+		logText := "******** GetListWithdraws "
+
+		userID, ok := r.Context().Value(userCtx).(*int)
+		if !ok {
+			http.Error(w, "Ошибка получения ID пользователя", http.StatusInternalServerError)
+			log.Print(logText, "Ошибка получения ID пользователя")
+			return
+		}
+
+		log.Print(logText, r.RequestURI, " userID ", userID)
 
 		b, err := repo.GetListWithdrawsJSON(userID)
 		if err != nil {

@@ -42,19 +42,19 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 				orderDB, err := repo.FindNewOrder()
 
 				if err != nil {
-					log.Print("Не удалось сформировать запрос ", err.Error())
+					log.Print(logText, " Не удалось сформировать запрос ", err.Error())
 					continue
 				}
 
 				if orderDB.Ordernum == "" {
-					log.Print("Нет новых заказов")
+					log.Print(logText, " Нет новых заказов")
 					continue
 				}
 
 				raddr := fmt.Sprintf(urlUpdate, cfg.AccuralAddress, orderDB.Ordernum)
 				r, err := http.NewRequest(http.MethodPost, raddr, nil)
 				if err != nil {
-					log.Print("Не удалось сформировать запрос получения данных заказа ", orderDB, err.Error())
+					log.Print(logText, " Не удалось сформировать запрос получения данных заказа ", orderDB, err.Error())
 					continue
 				}
 				r.Header.Set("Content-Type", "application/json")
@@ -74,14 +74,14 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 
 				body, err := ioutil.ReadAll(resp.Body)
 				if err != nil {
-					log.Print(" Ошибка открытия тела ответа запроса получения данных заказа", err.Error())
+					log.Print(logText, " Ошибка открытия тела ответа запроса получения данных заказа", err.Error())
 					continue
 				}
 
 				err = json.Unmarshal(body, &accuralOrder)
 
 				if err != nil {
-					log.Print("Ошибка дессериализации тела ответа " + err.Error())
+					log.Print(logText, " Ошибка дессериализации тела ответа "+err.Error())
 					continue
 				}
 
