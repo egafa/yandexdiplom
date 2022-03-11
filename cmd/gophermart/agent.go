@@ -36,7 +36,7 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 			{
 				var accuralOrder AccuralOrder
 
-				logText := "<<<<<< Запуск Клиента <<<<<<<<< "
+				logText := "<<<<<< Запуск Клиента <<<<<<<<<<< "
 				log.Print(logText)
 
 				orderDB, err := repo.FindNewOrder()
