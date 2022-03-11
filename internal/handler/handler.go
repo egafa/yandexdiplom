@@ -278,13 +278,13 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 		matched, err := regexp.MatchString(`[0-9]`, orderNumber)
 		if !matched || err != nil {
 			http.Error(w, "Ошибка преобразования номера заказа", http.StatusUnprocessableEntity)
-			log.Print("Ошибка преобразования номера заказа ", err.Error())
+			log.Print("Ошибка преобразования номера заказа ")
 			return
 		}
 
 		if !checkLuhn(orderNumber) {
 			http.Error(w, "Ошибка проверки номера заказа", http.StatusUnprocessableEntity)
-			log.Print("Ошибка проверки номера заказа ", err.Error())
+			log.Print("Ошибка проверки номера заказа ")
 			return
 		}
 
