@@ -54,19 +54,19 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 				raddr := fmt.Sprintf(urlUpdate, cfg.AccuralAddress, orderDB.Ordernum)
 				r, err := http.NewRequest(http.MethodPost, raddr, nil)
 				if err != nil {
-					log.Print("Не удалось сформировать запрос получения данных заказа ", err.Error())
+					log.Print("Не удалось сформировать запрос получения данных заказа ", orderDB, err.Error())
 					continue
 				}
 				r.Header.Set("Content-Type", "application/json")
 
 				resp, err := client.Do(r)
 				if err != nil {
-					log.Print("Ошибка выполнения запроса получения данных заказа ", err.Error())
+					log.Print(logText, " Ошибка выполнения запроса получения данных заказа ", orderDB, err.Error())
 					continue
 				}
 
 				if resp.StatusCode != http.StatusOK {
-					log.Print("Ошибочный код выполнения запроса получения данных заказа")
+					log.Print(logText, "Ошибочный код выполнения запроса получения данных заказа")
 					continue
 				}
 
