@@ -117,8 +117,8 @@ func GetOrders(repo *storage.Repo) http.HandlerFunc {
 
 		b, err := repo.GetListOrdersJSON(userID)
 		if err != nil {
-			http.Error(w, "Ошибка получения запросв на проверку пользователя номера заказа", http.StatusInternalServerError)
-			log.Print("Ошибка получения запросв на проверку пользователя номера заказа ", err.Error())
+			http.Error(w, "Ошибка получения запроса на проверку пользователя номера заказа", http.StatusInternalServerError)
+			log.Print("Ошибка получения запроса на проверку пользователя номера заказа ", err.Error())
 			return
 		}
 
