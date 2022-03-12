@@ -85,7 +85,7 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 					continue
 				}
 
-				log.Print(logText+" Отправлен запрос получения данных заказа ", raddr, orderDB)
+				log.Print(logText+" Отправлен запрос получения данных заказа ", raddr, orderDB, string(body))
 
 				//accuralOrder.Order = "5246029110944032"
 				//accuralOrder.Status = "PROCESSED"
