@@ -161,10 +161,11 @@ func GetBalance(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		w.Write(b)
 		w.Header().Set("Content-Type", "application/json")
+		w.Write(b)
 		w.WriteHeader(http.StatusOK)
-		log.Print(logText, " номера заказов успешно получены")
+		log.Print(logText, " номера заказов успешно получены "+string(b))
+
 	}
 }
 
