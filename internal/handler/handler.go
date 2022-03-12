@@ -130,14 +130,13 @@ func GetOrders(repo *storage.Repo) http.HandlerFunc {
 		if b == nil {
 			w.WriteHeader(http.StatusNoContent)
 			//http.Error(w, "Нет данных", http.StatusNoContent)
-			log.Print(logText, " Нет данных у пользователя ", userID)
+			log.Print(logText, " Нет данных у пользователя ", *userID)
 			return
 		}
 
 		w.Write(b)
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		log.Print(logText, " номера заказов успешно получены")
+		log.Print(logText, " номера заказов успешно получены ", *userID)
 	}
 }
 
@@ -146,8 +145,8 @@ func GetBalance(repo *storage.Repo) http.HandlerFunc {
 
 		userID := r.Context().Value("userId").(*int)
 
-		logText := "********* GetOrders ********** "
-		log.Print(logText, r.RequestURI, " userID ", userID)
+		logText := "********* GetBalance ********** "
+		log.Print(logText, r.RequestURI, " userID ", *userID)
 
 		b, err := repo.GetBalanceJSON(userID)
 		if err != nil {
@@ -165,7 +164,7 @@ func GetBalance(repo *storage.Repo) http.HandlerFunc {
 		w.Write(b)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		log.Print("номера заказов успешно получены")
+		log.Print(logText, " номера заказов успешно получены")
 	}
 }
 
@@ -261,7 +260,7 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 
 		defer r.Body.Close()
 
-		logText := "******** LoadWithdraw "
+		logText := "******** LoadWithdraw " + r.RequestURI
 
 		userID, ok := r.Context().Value(userCtx).(*int)
 		if !ok {
@@ -270,7 +269,7 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		log.Print(logText, r.RequestURI, " userID ", userID)
+		log.Print(logText, " userID ", *userID)
 
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -292,13 +291,13 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 		matched, err := regexp.MatchString(`[0-9]`, orderNumber)
 		if !matched || err != nil {
 			http.Error(w, "Ошибка преобразования номера заказа", http.StatusUnprocessableEntity)
-			log.Print("Ошибка преобразования номера заказа ")
+			log.Print(logText, " Ошибка преобразования номера заказа ")
 			return
 		}
 
 		if !checkLuhn(orderNumber) {
 			http.Error(w, "Ошибка проверки номера заказа", http.StatusUnprocessableEntity)
-			log.Print("Ошибка проверки номера заказа ")
+			log.Print(logText, "Ошибка проверки номера заказа ", withdraw)
 			return
 		}
 
