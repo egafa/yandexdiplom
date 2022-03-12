@@ -21,7 +21,7 @@ type AccuralOrder struct {
 
 func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) {
 
-	urlUpdate := "http://%s/api/orders/%s"
+	urlUpdate := "%s/api/orders/%s"
 
 	client := &http.Client{}
 
