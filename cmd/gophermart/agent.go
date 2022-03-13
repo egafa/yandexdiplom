@@ -95,7 +95,7 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 
 				s, err := strconv.ParseFloat(accuralOrder.Accural, 32)
 				if err != nil {
-					log.Print(logText, " Ошибка преобразования в число "+err.Error())
+					log.Print(logText, " Ошибка преобразования в число "+err.Error(), "accuralOrder ", accuralOrder)
 					continue
 				}
 				orderDB.Accural = float32(s)
