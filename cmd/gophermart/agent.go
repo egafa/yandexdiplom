@@ -16,7 +16,7 @@ import (
 type AccuralOrder struct {
 	Order   string  `json:"order"`
 	Status  string  `json:"status"`
-	Accural float64 `json:"Accural"`
+	Accrual float64 `json:"accrual"`
 }
 
 func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) {
