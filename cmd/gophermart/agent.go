@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/egafa/yandexdiplom/config"
@@ -15,9 +14,9 @@ import (
 )
 
 type AccuralOrder struct {
-	Order   string `json:"order"`
-	Status  string `json:"status"`
-	Accural string `json:"Accural"`
+	Order   string  `json:"order"`
+	Status  string  `json:"status"`
+	Accural float64 `json:"Accural"`
 }
 
 func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) {
@@ -93,12 +92,11 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 				orderDB.Ordernum = accuralOrder.Order
 				orderDB.Status = accuralOrder.Status
 
-				s, err := strconv.ParseFloat(accuralOrder.Accural, 32)
-				if err != nil {
-					log.Print(logText, " Ошибка преобразования в число "+err.Error(), "accuralOrder ", accuralOrder)
-					continue
-				}
-				orderDB.Accural = float32(s)
+				//s, err := strconv.ParseFloat(accuralOrder.Accural, 32)
+				//if err != nil {
+				//	log.Print(logText, " Ошибка преобразования в число "+err.Error(), "accuralOrder ", accuralOrder)
+				//	continue
+				//}
 
 				log.Print(logText+" Отправлен запрос получения данных заказа ", raddr, string(body), accuralOrder)
 
