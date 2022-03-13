@@ -93,7 +93,7 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 				orderDB.Status = accuralOrder.Status
 				orderDB.Accural = accuralOrder.Accural
 
-				log.Print(logText+" Отправлен запрос получения данных заказа ", raddr, orderDB, accuralOrder)
+				log.Print(logText+" Отправлен запрос получения данных заказа ", raddr, string(body), accuralOrder)
 
 				err = repo.UpdateNewOrder(&orderDB)
 				if err != nil {
