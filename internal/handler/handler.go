@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ShiraazMoollatjie/goluhn"
 	"github.com/egafa/yandexdiplom/storage"
 
 	"time"
@@ -199,11 +200,18 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		if !checkLuhn(orderNumber) {
-			http.Error(w, "Ошибка проверки номера заказа", http.StatusUnprocessableEntity)
-			log.Print(logText+"Ошибка проверки номера заказа ", orderNumber)
+		err = goluhn.Validate(orderNumber)
+		if err != nil {
+			http.Error(w, "Ошибка проверки номера заказа goluhn", http.StatusUnprocessableEntity)
+			log.Print(logText+"Ошибка проверки номера заказа goluhn", orderNumber)
 			return
 		}
+
+		//if !checkLuhn(orderNumber) {
+		//	http.Error(w, "Ошибка проверки номера заказа", http.StatusUnprocessableEntity)
+		//	log.Print(logText+"Ошибка проверки номера заказа ", orderNumber)
+		//	return
+		//}
 
 		fmt.Println(logText + " Получение USER ID")
 
