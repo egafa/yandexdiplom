@@ -16,7 +16,7 @@ import (
 type AccuralOrder struct {
 	Order   string  `json:"order"`
 	Status  string  `json:"status"`
-	Accrual float64 `json:"accrual"`
+	Accrual float32 `json:"accrual"`
 }
 
 func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) {
@@ -91,12 +91,7 @@ func sendReq(ctx context.Context, cfg *config.ConfigServer, repo *storage.Repo) 
 
 				orderDB.Ordernum = accuralOrder.Order
 				orderDB.Status = accuralOrder.Status
-
-				//s, err := strconv.ParseFloat(accuralOrder.Accural, 32)
-				//if err != nil {
-				//	log.Print(logText, " Ошибка преобразования в число "+err.Error(), "accuralOrder ", accuralOrder)
-				//	continue
-				//}
+				orderDB.Accural = accuralOrder.Accrual
 
 				log.Print(logText+" Отправлен запрос получения данных заказа ", raddr, string(body), accuralOrder)
 
