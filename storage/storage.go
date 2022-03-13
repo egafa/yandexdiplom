@@ -159,6 +159,8 @@ func (r *Repo) UpdateNewOrder(order *Order) error {
 		return fmt.Errorf("Не найден заказ %s для обновления", order.Ordernum)
 	}
 
+	log.Println("Обновление заказа ", order.Ordernum, " статус ", order.Status, "Accural ", order.Accural)
+
 	qtext = "UPDATE %s SET status = $1, accural = $2 WHERE ordernum=$3"
 	_, err = tx.Exec(fmt.Sprintf(qtext, r.OrderTable), order.Status, order.Accural, order.Ordernum)
 
