@@ -107,7 +107,7 @@ func (r *Repo) NewOrder(orderNumber *string, userID *int) error {
 		return err
 	}
 
-	_, err = stmtInsert.Exec(*orderNumber, *userID, "new", time.Now(), 0.0)
+	_, err = stmtInsert.Exec(*orderNumber, *userID, "NEW", time.Now(), 0.0)
 
 	if err != nil {
 		return err
@@ -119,7 +119,7 @@ func (r *Repo) NewOrder(orderNumber *string, userID *int) error {
 func (r *Repo) FindNewOrder() (Order, error) {
 
 	qtext := "select ordernum, userID from %s where status = $1"
-	rows, err := r.db.Query(fmt.Sprintf(qtext, r.OrderTable), "new")
+	rows, err := r.db.Query(fmt.Sprintf(qtext, r.OrderTable), "NEW")
 	if err != nil {
 		log.Println("database error Select", rows.Err().Error())
 		return Order{}, rows.Err()
