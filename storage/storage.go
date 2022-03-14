@@ -323,6 +323,8 @@ func (r *Repo) NewWithdraw(w *Withdraw, userID *int) error {
 
 	_, err = stmtInsert.Exec(w.Order, *userID, time.Now(), w.Sum)
 
+	log.Print("Добавление записи в ", r.WithdrawTable, *w)
+
 	if err != nil {
 		return err
 	}
