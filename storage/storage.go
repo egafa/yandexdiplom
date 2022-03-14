@@ -19,8 +19,8 @@ var (
 
 type Repo struct {
 	db             *sql.DB
-	userRepository *UserRepository
 	Cfg            *config.ConfigServer
+	userRepository *UserRepository
 	UserTable      string
 	OrderTable     string
 	WithdrawTable  string
