@@ -7,8 +7,6 @@ import (
 	"log"
 	"net/http"
 	"regexp"
-	"strconv"
-	"strings"
 
 	"github.com/ShiraazMoollatjie/goluhn"
 	"github.com/egafa/yandexdiplom/storage"
@@ -207,12 +205,6 @@ func LoadOrder(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		//if !checkLuhn(orderNumber) {
-		//	http.Error(w, "Ошибка проверки номера заказа", http.StatusUnprocessableEntity)
-		//	log.Print(logText+"Ошибка проверки номера заказа ", orderNumber)
-		//	return
-		//}
-
 		fmt.Println(logText + " Получение USER ID")
 
 		userID, ok := r.Context().Value(userCtx).(*int)
@@ -304,12 +296,6 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		//if !checkLuhn(orderNumber) {
-		//	http.Error(w, "Ошибка проверки номера заказа", http.StatusUnprocessableEntity)
-		//	log.Print(logText, "Ошибка проверки номера заказа ", withdraw)
-		//	return
-		//}
-
 		err = goluhn.Validate(orderNumber)
 		if err != nil {
 			http.Error(w, "Ошибка проверки номера заказа goluhn", http.StatusUnprocessableEntity)
@@ -339,7 +325,7 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusAccepted)
 		log.Print(logText, " Новый номер заказа успешно обработан "+orderNumber)
 
 	}
@@ -377,34 +363,6 @@ func GetListWithdraws(repo *storage.Repo) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		log.Print("List Withdraws успешно получены")
 	}
-}
-
-func checkLuhn(card_number string) bool { // принимаем в аргументы номер карты
-
-	var sum int // переменная которая будет хранить проверочную сумму цифр
-
-	ss := strings.Split(card_number, "")
-	lens := len(ss)
-	for i := 0; i < lens; i++ { // главный цикл, в процессе которого проверяется валидность номера карты
-
-		number, _ := strconv.Atoi(ss[i]) // - '0';  // переводим цифру из char в int
-
-		if i%2 == 0 { // если позиция цифры чётное, то:
-			number *= 2 // умножаем цифру на 2
-
-			if number > 9 { // согласно алгоритму, ни одно число не должно быть больше 9
-				number -= 9 // второй вариант сведения к единичному разряду
-			}
-		}
-
-		sum += number // прибавляем к sum номера согласно алгоритму
-
-		if sum >= 10 { // если сумма больше либо 10
-			sum -= 10 // вычитаем из суммы 10, т.к. последняя цифра не изменится
-		}
-	}
-
-	return sum == 0 // вернуть, равна ли последняя цифра нулю
 }
 
 func GenerateToken(userID int, TokenTTL time.Duration, SessionKey string) (string, error) {
