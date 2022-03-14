@@ -397,7 +397,7 @@ func (r *Repo) GetBalance(userID *int) (Balance, error) {
 	}
 
 	res.Withdrawn = sum
-
+	res.Accural = res.Accural - res.Withdrawn
 	return res, nil
 }
 
