@@ -115,7 +115,7 @@ func GetOrders(repo *storage.Repo) http.HandlerFunc {
 		logText := "********* GetOrders ********** "
 		log.Print(logText, r.RequestURI)
 
-		userID := r.Context().Value("userId").(*int)
+		userID := r.Context().Value(userCtx).(*int)
 
 		b, err := repo.GetListOrdersJSON(userID)
 		if err != nil {

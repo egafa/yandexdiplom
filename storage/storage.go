@@ -153,6 +153,10 @@ func (r *Repo) UpdateNewOrder(order *Order) error {
 		log.Println("database error Select", err.Error())
 		return err
 	}
+	if rows.Err() != nil {
+		log.Println("database error Select", rows.Err().Error())
+		return err
+	}
 	defer rows.Close()
 
 	if !rows.Next() {
@@ -229,6 +233,10 @@ func (r *Repo) GetListOrders(userID *int) ([]Order, error) {
 		log.Println("database error Select", err.Error())
 		return res, err
 	}
+	if rows.Err() != nil {
+		log.Println("database error Select", rows.Err().Error())
+		return res, rows.Err()
+	}
 	defer rows.Close()
 
 	for {
@@ -276,6 +284,10 @@ func (r *Repo) GetListWithdraws(userID *int) ([]Withdraw, error) {
 	if err != nil {
 		log.Println("database error Select", err.Error())
 		return res, err
+	}
+	if rows.Err() != nil {
+		log.Println("database error Select", rows.Err().Error())
+		return res, rows.Err()
 	}
 	defer rows.Close()
 
