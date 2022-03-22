@@ -325,7 +325,7 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		w.WriteHeader(http.StatusAccepted)
+		w.WriteHeader(http.StatusOK)
 		log.Print(logText, " Новый номер заказа успешно обработан "+orderNumber)
 
 	}
