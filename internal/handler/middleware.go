@@ -15,8 +15,8 @@ import (
 type favContextKey string
 
 const (
-	authorizationHeader               = "Authorization"
-	userCtx             favContextKey = "userId"
+	authorizationHeader = "Authorization"
+	userCtx             = "userId"
 )
 
 func UserIdentity(next http.Handler) http.Handler {
