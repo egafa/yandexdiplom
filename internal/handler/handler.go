@@ -142,7 +142,8 @@ func GetOrders(repo *storage.Repo) http.HandlerFunc {
 func GetBalance(repo *storage.Repo) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		userID := r.Context().Value("userId").(*int)
+		//userID := r.Context().Value("userId").(*int) userCtx
+		userID := r.Context().Value(userCtx).(*int)
 
 		logText := "********* GetBalance ********** "
 		log.Print(logText, r.RequestURI, " userID ", *userID)
@@ -325,7 +326,7 @@ func LoadWithdraw(repo *storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		w.WriteHeader(http.StatusAccepted)
+		w.WriteHeader(http.StatusOK)
 		log.Print(logText, " Новый номер заказа успешно обработан "+orderNumber)
 
 	}

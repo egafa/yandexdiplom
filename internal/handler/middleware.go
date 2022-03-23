@@ -15,8 +15,8 @@ import (
 type favContextKey string
 
 const (
-	authorizationHeader               = "Authorization"
-	userCtx             favContextKey = "userId"
+	authorizationHeader = "Authorization"
+	userCtx             = "userId"
 )
 
 func UserIdentity(next http.Handler) http.Handler {
@@ -32,7 +32,7 @@ func UserIdentity(next http.Handler) http.Handler {
 		headerParts := strings.Split(header, " ")
 		if len(headerParts) != 2 || headerParts[0] != "Bearer" {
 			http.Error(w, "einvalid auth header", http.StatusUnauthorized)
-			log.Print("invalid auth header ", header)
+			log.Print("invalid auth header", header)
 			return
 		}
 
